@@ -1,0 +1,10 @@
+E:\programmering\C#\NoteBlock\bin\Debug\NoteBlock.exe.config
+E:\programmering\C#\NoteBlock\bin\Debug\NoteBlock.exe
+E:\programmering\C#\NoteBlock\bin\Debug\NoteBlock.pdb
+E:\programmering\C#\NoteBlock\obj\Debug\NoteBlock.csproj.AssemblyReference.cache
+E:\programmering\C#\NoteBlock\obj\Debug\NoteBlock.Frontend.MainWindow.resources
+E:\programmering\C#\NoteBlock\obj\Debug\NoteBlock.Properties.Resources.resources
+E:\programmering\C#\NoteBlock\obj\Debug\NoteBlock.csproj.GenerateResource.cache
+E:\programmering\C#\NoteBlock\obj\Debug\NoteBlock.csproj.CoreCompileInputs.cache
+E:\programmering\C#\NoteBlock\obj\Debug\NoteBlock.exe
+E:\programmering\C#\NoteBlock\obj\Debug\NoteBlock.pdb
