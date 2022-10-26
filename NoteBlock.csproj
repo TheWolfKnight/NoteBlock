@@ -57,6 +57,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Src\Errors.cs" />
     <Compile Include="Src\Handles\MainWindowHandle.cs" />
+    <Compile Include="Src\Models\ContentHelper.cs" />
     <Compile Include="Src\Models\Identifier.cs" />
     <Compile Include="Src\Models\Note.cs" />
     <Compile Include="Src\Services\SqlBridge.cs" />
