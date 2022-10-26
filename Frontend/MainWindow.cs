@@ -29,5 +29,26 @@ namespace NoteBlock.Frontend
         {
             Handler.OnMainWindowLoadEvent();
         }
+
+        private void TextField_Enter(object sender, EventArgs e)
+        {
+            Handler.OnTextFieldEnterEvent(sender);
+        }
+
+        private void TextField_Leave(object sender, EventArgs e)
+        {
+            Handler.OnTextFieldLeaveEvent(sender);
+        }
+
+
+        private void TextField_Change(object sender, EventArgs e)
+        {
+            Handler.OnTextFieldChangeEvent(sender);
+        }
+
+        private void Button_Click(object sender, EventArgs e)
+        {
+            Handler.OnButtonClickEvent(sender);
+        }
     }
 }

@@ -31,70 +31,95 @@ namespace NoteBlock.Frontend
         {
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.lb_Notes = new System.Windows.Forms.Label();
-            this.bt_NewNote = new System.Windows.Forms.Button();
-            this.bt_DeleteNote = new System.Windows.Forms.Button();
+            this.btn_NewNote = new System.Windows.Forms.Button();
+            this.btn_DeleteNote = new System.Windows.Forms.Button();
             this.btn_SaveNote = new System.Windows.Forms.Button();
+            this.tb_NameField = new System.Windows.Forms.TextBox();
+            this.rtb_NoteBody = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
             // treeView1
             // 
-            this.treeView1.Location = new System.Drawing.Point(17, 37);
-            this.treeView1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.treeView1.Location = new System.Drawing.Point(13, 30);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(173, 501);
+            this.treeView1.Size = new System.Drawing.Size(131, 408);
             this.treeView1.TabIndex = 0;
             // 
             // lb_Notes
             // 
             this.lb_Notes.AutoSize = true;
-            this.lb_Notes.Location = new System.Drawing.Point(17, 14);
-            this.lb_Notes.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lb_Notes.Location = new System.Drawing.Point(13, 11);
             this.lb_Notes.Name = "lb_Notes";
-            this.lb_Notes.Size = new System.Drawing.Size(49, 17);
+            this.lb_Notes.Size = new System.Drawing.Size(38, 13);
             this.lb_Notes.TabIndex = 1;
             this.lb_Notes.Text = "Notes:";
             // 
-            // bt_NewNote
+            // btn_NewNote
             // 
-            this.bt_NewNote.Location = new System.Drawing.Point(205, 7);
-            this.bt_NewNote.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.bt_NewNote.Name = "bt_NewNote";
-            this.bt_NewNote.Size = new System.Drawing.Size(100, 28);
-            this.bt_NewNote.TabIndex = 2;
-            this.bt_NewNote.Text = "New Note";
-            this.bt_NewNote.UseVisualStyleBackColor = true;
+            this.btn_NewNote.Location = new System.Drawing.Point(154, 6);
+            this.btn_NewNote.Name = "btn_NewNote";
+            this.btn_NewNote.Size = new System.Drawing.Size(75, 23);
+            this.btn_NewNote.TabIndex = 2;
+            this.btn_NewNote.Text = "New Note";
+            this.btn_NewNote.UseVisualStyleBackColor = true;
+            this.btn_NewNote.Click += new System.EventHandler(this.Button_Click);
             // 
-            // bt_DeleteNote
+            // btn_DeleteNote
             // 
-            this.bt_DeleteNote.Location = new System.Drawing.Point(421, 8);
-            this.bt_DeleteNote.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.bt_DeleteNote.Name = "bt_DeleteNote";
-            this.bt_DeleteNote.Size = new System.Drawing.Size(100, 28);
-            this.bt_DeleteNote.TabIndex = 3;
-            this.bt_DeleteNote.Text = "Delete Note";
-            this.bt_DeleteNote.UseVisualStyleBackColor = true;
+            this.btn_DeleteNote.Location = new System.Drawing.Point(316, 6);
+            this.btn_DeleteNote.Name = "btn_DeleteNote";
+            this.btn_DeleteNote.Size = new System.Drawing.Size(75, 23);
+            this.btn_DeleteNote.TabIndex = 3;
+            this.btn_DeleteNote.Text = "Delete Note";
+            this.btn_DeleteNote.UseVisualStyleBackColor = true;
+            this.btn_DeleteNote.Click += new System.EventHandler(this.Button_Click);
             // 
             // btn_SaveNote
             // 
-            this.btn_SaveNote.Location = new System.Drawing.Point(313, 8);
-            this.btn_SaveNote.Margin = new System.Windows.Forms.Padding(4);
+            this.btn_SaveNote.Location = new System.Drawing.Point(235, 6);
             this.btn_SaveNote.Name = "btn_SaveNote";
-            this.btn_SaveNote.Size = new System.Drawing.Size(100, 28);
+            this.btn_SaveNote.Size = new System.Drawing.Size(75, 23);
             this.btn_SaveNote.TabIndex = 4;
             this.btn_SaveNote.Text = "Save Note";
             this.btn_SaveNote.UseVisualStyleBackColor = true;
+            this.btn_SaveNote.Click += new System.EventHandler(this.Button_Click);
+            // 
+            // tb_NameField
+            // 
+            this.tb_NameField.Location = new System.Drawing.Point(154, 36);
+            this.tb_NameField.Name = "tb_NameField";
+            this.tb_NameField.Size = new System.Drawing.Size(237, 20);
+            this.tb_NameField.TabIndex = 5;
+            this.tb_NameField.Tag = "unchanged";
+            this.tb_NameField.Text = "Enter a note name";
+            this.tb_NameField.TextChanged += new System.EventHandler(this.TextField_Change);
+            this.tb_NameField.Enter += new System.EventHandler(this.TextField_Enter);
+            this.tb_NameField.Leave += new System.EventHandler(this.TextField_Leave);
+            // 
+            // rtb_NoteBody
+            // 
+            this.rtb_NoteBody.Location = new System.Drawing.Point(154, 63);
+            this.rtb_NoteBody.Name = "rtb_NoteBody";
+            this.rtb_NoteBody.Size = new System.Drawing.Size(634, 375);
+            this.rtb_NoteBody.TabIndex = 6;
+            this.rtb_NoteBody.Tag = "unchanged";
+            this.rtb_NoteBody.Text = "Enter a note";
+            this.rtb_NoteBody.TextChanged += new System.EventHandler(this.TextField_Change);
+            this.rtb_NoteBody.Enter += new System.EventHandler(this.TextField_Enter);
+            this.rtb_NoteBody.Leave += new System.EventHandler(this.TextField_Leave);
             // 
             // MainWindow
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1067, 554);
+            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.rtb_NoteBody);
+            this.Controls.Add(this.tb_NameField);
             this.Controls.Add(this.btn_SaveNote);
-            this.Controls.Add(this.bt_DeleteNote);
-            this.Controls.Add(this.bt_NewNote);
+            this.Controls.Add(this.btn_DeleteNote);
+            this.Controls.Add(this.btn_NewNote);
             this.Controls.Add(this.lb_Notes);
             this.Controls.Add(this.treeView1);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "MainWindow";
             this.Text = "Note Block";
             this.Load += new System.EventHandler(this.MainWindow_Load);
@@ -107,9 +132,11 @@ namespace NoteBlock.Frontend
 
         private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.Label lb_Notes;
-        private System.Windows.Forms.Button bt_NewNote;
-        private System.Windows.Forms.Button bt_DeleteNote;
+        private System.Windows.Forms.Button btn_NewNote;
+        private System.Windows.Forms.Button btn_DeleteNote;
         private System.Windows.Forms.Button btn_SaveNote;
+        public System.Windows.Forms.TextBox tb_NameField;
+        public System.Windows.Forms.RichTextBox rtb_NoteBody;
     }
 }
 

@@ -49,9 +49,9 @@ namespace NoteBlock.Src.Models
 
 
         /// <summary>
-        /// 
+        /// Gets the current tail ID, used when determeining if any data can still be gotten from the database
         /// </summary>
-        /// <returns></returns>
+        /// <returns> An integer number representing the tail ID of the current head </returns>
         public int? GetTail()
         {
             return TailID;
@@ -59,9 +59,9 @@ namespace NoteBlock.Src.Models
 
 
         /// <summary>
-        /// 
+        /// Returns the current tile for the ContentHelper
         /// </summary>
-        /// <returns></returns>
+        /// <returns> Either a ContentHelper instance, if any is avaliable, or null if not </returns>
         public ContentHelper? GetNext()
         {
             return Next;
@@ -69,9 +69,9 @@ namespace NoteBlock.Src.Models
 
 
         /// <summary>
-        /// 
+        /// Sets the tail for the current ContentHelper
         /// </summary>
-        /// <param name="tail"></param>
+        /// <param name="tail"> The next ContentHelper in line </param>
         public void SetTail( ContentHelper tail )
         {
             Next = tail;
@@ -79,12 +79,26 @@ namespace NoteBlock.Src.Models
 
 
         /// <summary>
-        /// 
+        /// Uses recursion to get all the content from the ContentHelper instancec for the current note
         /// </summary>
-        /// <returns></returns>
+        /// <returns> A string representation of the current notes content </returns>
         public string GetContent()
         {
-            throw new TBD();
+            // Sets the result variable to be equal the content of the current helper.
+            string r = Content;
+
+            // Get the value from the GetNext method
+            ContentHelper? h = GetNext();
+
+            // Checks if the holder variable is equal to null
+            // if so, returs the content
+            if ( h == null )
+                return r;
+
+            // If the holder variable is not null, the content of the next ContentHelper is
+            // appended to the result variable and returend to the caller
+            r += h.GetContent();
+            return r;
         }
 
     }

@@ -35,4 +35,11 @@ namespace NoteBlock.Src
         public InvalidDataException(string msg, Exception inner) : base(msg, inner) { }
     }
 
+    public class ElementNotFoundException : Exception
+    {
+        public ElementNotFoundException() : base() { }
+        public ElementNotFoundException(string msg) : base(msg) { }
+        public ElementNotFoundException(string msg, Exception inner) : base(msg, inner) { }
+    }
+
 }

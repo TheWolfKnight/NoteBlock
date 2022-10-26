@@ -17,6 +17,12 @@ namespace NoteBlock.Src.Models
 
         public uint ID { get; private set; }
         
+
+        /// <summary>
+        /// Creates a clean note with no details
+        /// </summary>
+        public Note() { }
+
         /// <summary>
         /// Creates a instance of the Note Class, and sets the internal fields to the desired valuse
         /// </summary>

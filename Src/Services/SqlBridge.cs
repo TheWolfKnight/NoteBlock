@@ -149,14 +149,18 @@ namespace NoteBlock.Src.Services
         /// <returns></returns>
         public string GetDatabaseEntryContent( int contentHead )
         {
+            //
             string cmd = $"select * from Content where Content.id={contentHead}";
             SqlCommand sqlCommand = new SqlCommand(cmd, SqlConn);
 
+            //
             SqlDataReader reader = sqlCommand.ExecuteReader();
 
+            //
             ContentHelper head = new ContentHelper(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
             ContentHelper tail = head;
 
+            //
             while ( tail.GetTail() != null )
             {
                 cmd = $"select * from Content where Content.id={tail.GetTail()}";
