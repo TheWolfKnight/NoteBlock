@@ -16,16 +16,13 @@ namespace NoteBlock.Frontend
 {
     public partial class MainWindow : Form
     {
-        #nullable enable
-        public string? ActiveNode;
 
-        private MainWindowHandle Handler;
+        private readonly MainWindowHandle Handler;
 
         public MainWindow()
         {
             InitializeComponent();
             Handler = new MainWindowHandle(this);
-            ActiveNode = null;
         }
 
         private void MainWindow_Load(object sender, EventArgs e)

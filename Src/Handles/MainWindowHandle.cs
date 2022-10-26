@@ -13,7 +13,10 @@ namespace NoteBlock.Src.Handles
     public class MainWindowHandle
     {
 
-        private MainWindow Owner;
+        public Note ActiveNode;
+        public List<Identifier> NoteList;
+
+        private readonly MainWindow Owner;
         private SqlBridge Bridge;
 
 
@@ -21,6 +24,7 @@ namespace NoteBlock.Src.Handles
         {
             Owner = owner;
             Bridge = new SqlBridge("localhost", "NoteBlockDB", TrustedConnection.True );
+            NoteList = new List<Identifier>();
         }
 
         public void OnMainWindowLoadEvent()
@@ -32,7 +36,8 @@ namespace NoteBlock.Src.Handles
             {
                 throw new Exception($"Could not connect to the database.{Environment.NewLine}This is currently a fatal error, but will later be fixed");
             }
-        
+
+            NoteList = Bridge.GetAllDatebaseEntryIdentifiers();
         }
 
     }
