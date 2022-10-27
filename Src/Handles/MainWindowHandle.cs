@@ -16,7 +16,6 @@ namespace NoteBlock.Src.Handles
     {
         #nullable enable
         public Note? ActiveNote;
-        public List<string> NoteList;
 
         private List<Note> TMPNoteHolder;
         private readonly MainWindow Owner;
@@ -31,14 +30,13 @@ namespace NoteBlock.Src.Handles
         {
             Owner = owner;
             Bridge = new SqlBridge("localhost", "NoteBlockDB", TrustedConnection.True );
-            NoteList = new List<string>();
             TMPNoteHolder = new List<Note>();
             ActiveNote = new Note();
         }
 
 
         /// <summary>
-        /// 
+        /// Initialize the main window
         /// </summary>
         public void OnMainWindowLoadEvent()
         {
@@ -56,24 +54,17 @@ namespace NoteBlock.Src.Handles
             Owner.tb_NameField.Tag = new TextItemTag(false, false);
             Owner.rtb_NoteBody.Tag = new TextItemTag(false, false);
 
-            LoadNotesList();
+            // LoadNotesList();
 
         }
 
 
         /// <summary>
-        /// Loads in all the note elements names from the NoteList field
+        /// Loads in all the note elements names from the database
         /// </summary>
         private void LoadNotesList()
         {
-            TreeView notes = Owner.tv_Notes;
-            Owner.tv_Notes.Nodes.Clear();
-
-            NoteList.ForEach(name => {
-                TreeNode node = new TreeNode(name);
-                if (!notes.Nodes.Contains(node))
-                    notes.Nodes.Add(node);
-            });
+            throw new TBD();
         }
 
 
@@ -87,6 +78,7 @@ namespace NoteBlock.Src.Handles
         {
             if ( sender.ToString().Split(',')[0] == "System.Windows.Forms.TextBox")
             {
+                Owner.ChangeName = true;
                 textBoxDelegate((TextBox)sender);
             } else if ( sender.ToString().Split(',')[0] == "System.Windows.Forms.RichTextBox")
             {
@@ -106,7 +98,7 @@ namespace NoteBlock.Src.Handles
         {
             TextItemTag tag = (TextItemTag)sender.Tag;
 
-            if (!tag.IsChanged)
+            if (!tag.IsChanged && !tag.IsSaved)
             {
                 sender.Text = "";
             }
@@ -122,7 +114,7 @@ namespace NoteBlock.Src.Handles
         {
             TextItemTag tag = (TextItemTag)sender.Tag;
 
-            if (!tag.IsChanged)
+            if (!tag.IsChanged && !tag.IsSaved)
             {
                 sender.Text = "";
             }
@@ -174,26 +166,40 @@ namespace NoteBlock.Src.Handles
         /// <param name="sender"> The caller of the event delegate </param>
         public int HandleTextBoxOnChangeDelegate(TextBox sender)
         {
+            // makes sure the change comes from the user
+            if (!Owner.ChangeName || Owner.tb_NameField.TextLength < 1)
+                return 1;
 
+            // gets the tag for the TextBox and sets them correctly
             TextItemTag tmp = (TextItemTag)sender.Tag;
             tmp.IsChanged = true;
+            tmp.IsSaved = false;
 
+            // Sets the Tag field on the TextBox
             sender.Tag = tmp;
 
+            // If the TextBox is empty, set the text to the original message
             if (Owner.tb_NameField.Text == "\n")
             {
                 Owner.tb_NameField.Text = "Enter a note name";
                 Owner.lb_NameCharCount.Text = "0/50";
                 return 0;
             }
+
+            // updates the char counter
             string[] splitLb = Owner.lb_NameCharCount.Text.Split('/');
             splitLb[0] = Owner.tb_NameField.TextLength.ToString();
             Owner.lb_NameCharCount.Text = string.Join("/", splitLb);
 
+            // if the char amt exceds the limit of 50 chars, set the char counter to red text
+            // if it goes under the max, set it to black
             if (Owner.tb_NameField.TextLength > 50)
                 Owner.lb_NameCharCount.ForeColor = Color.Red;
             else
                 Owner.lb_NameCharCount.ForeColor = Color.Black;
+
+            // finish the interaction
+            Owner.ChangeName = false;
 
             return 0;
         }
@@ -208,6 +214,7 @@ namespace NoteBlock.Src.Handles
 
             TextItemTag tmp = (TextItemTag)sender.Tag;
             tmp.IsChanged = true;
+            tmp.IsSaved = false;
 
             sender.Tag = tmp;
             return 0;
@@ -247,14 +254,14 @@ namespace NoteBlock.Src.Handles
             TextItemTag rtbTag = (TextItemTag)Owner.rtb_NoteBody.Tag;
             TextItemTag tbTag = (TextItemTag)Owner.tb_NameField.Tag;
 
-            if ( !tbTag.IsSaved && tbTag.IsChanged || !rtbTag.IsSaved && rtbTag.IsChanged )
+            if ( !IsSafeOverwrite() )
             {
                 DialogResult r = MessageBox.Show($"You are about to delete an unsaved note.{Environment.NewLine}Are you sure?", "Warning", MessageBoxButtons.YesNo);
                 if (r == DialogResult.No)
                     return;
             }
 
-            Owner.tb_NameField.Text = "Enter a note name";
+            Owner.tb_NameField.Text = "\n";
             Owner.rtb_NoteBody.Text = "Enter a note";
 
             tbTag.Reset();
@@ -273,41 +280,57 @@ namespace NoteBlock.Src.Handles
         /// </summary>
         private void SaveNoteButtonDelegate()
         {
-
+            // Gets the tags for the differnt elements to be saved
             TextItemTag rtb = (TextItemTag)Owner.rtb_NoteBody.Tag;
             TextItemTag tb = (TextItemTag)Owner.tb_NameField.Tag;
 
-            if ( !rtb.IsChanged || !tb.IsChanged )
+            // makes sure there is some kind of changes
+            if ( !rtb.IsChanged && !tb.IsChanged )
                 return;
 
+            // validates the name
             if (!ValidateName())
             {
                 return;
             }
 
+            // gets the name for the note, and makes a new note instance
             string name = Owner.tb_NameField.Text;
             Note note = new Note(name, Owner.rtb_NoteBody.Text, DateTime.Now);
 
-            if ( !NoteList.Contains(name) )
+            // Checks if the note already exists.
+            // If not the program saves a new note,
+            // else it asks if you want to overwrite your note.
+            if ( !TreeViewContains(name) )
             {
-                NoteList.Add(name);
+                Owner.tv_Notes.Nodes.Add(new TreeNode(name));
                 TMPNoteHolder.Add(note);
             } else
             {
+
+                DialogResult r = MessageBox.Show($"You are about to overwrite an existing note{Environment.NewLine}Are you sure?", "Warning", MessageBoxButtons.YesNo);
+
+                if (r != DialogResult.Yes)
+                    return;
+
                 Note tmp = TMPNoteHolder.Where(notes => notes.Name == name).FirstOrDefault();
                 if (tmp != null)
                     TMPNoteHolder.Remove(tmp);
+                TMPNoteHolder.Add(note);
             }
 
+            // Sets the relevant flags
             rtb.IsSaved = true;
+            rtb.IsChanged = false;
             tb.IsSaved = true;
+            tb.IsChanged = false;
 
+            // Saves the updated tags
             Owner.tb_NameField.Tag = tb;
             Owner.rtb_NoteBody.Tag = rtb;
 
+            // Sets the active note
             ActiveNote = note;
-
-            LoadNotesList();
         }
         
 
@@ -335,6 +358,66 @@ namespace NoteBlock.Src.Handles
 
         
         /// <summary>
+        /// Handels the event where a TreeNode is clicked
+        /// </summary>
+        /// <param name="name"> The name of the selected node </param>
+        public void OnTreeViewNodeMouseClickEvent(string name)
+        {
+            Note note = TMPNoteHolder.Where(node => node.Name == name).FirstOrDefault();
+
+            if (note == null)
+                throw new InvalidDataException($"Could not find a note by the name: {name}");
+
+            if ( ActiveNote != null && !IsSafeOverwrite() )
+            {
+                DialogResult r = MessageBox.Show($"You are about to leave a unsaved note{Environment.NewLine}Do you want to save before leaving?", "Warning", MessageBoxButtons.YesNoCancel);
+
+                if (r == DialogResult.Cancel || r == DialogResult.None)
+                    return;
+                if (r == DialogResult.Yes)
+                    SaveNoteButtonDelegate();
+                    
+            }
+
+            ActiveNote = note;
+            ApplayActiveNote();
+        }
+
+
+        /// <summary>
+        /// Checks if the TreeView contains a specific name
+        /// </summary>
+        /// <param name="name"> The name to be found in the TreeView </param>
+        /// <returns> Returns true if the item is in the TreeView, otherwise false </returns>
+        private bool TreeViewContains(string name)
+        {
+            foreach ( TreeNode node in Owner.tv_Notes.Nodes )
+            {
+                if (node.Text == name)
+                    return true;
+            }
+            return false;
+        }
+
+
+        /// <summary>
+        /// Attempts to remove an item from the TreeVeiw
+        /// </summary>
+        /// <param name="name"> The name of the Item to be removed </param>
+        private void RemoveTreeViewNode(string name)
+        {
+            foreach (TreeNode node in Owner.tv_Notes.Nodes)
+            {
+                if (node.Text == name)
+                {
+                    Owner.tv_Notes.Nodes.Remove(node);
+                }
+            }
+            return;
+        }
+
+
+        /// <summary>
         /// Deletes the current active note, and removes it from the NoteList List and database
         /// </summary>
         private void DeleteNoteButtonDelegate()
@@ -351,9 +434,52 @@ namespace NoteBlock.Src.Handles
 
             // Removes the item from all relevant areas, and then reloads the list
             TMPNoteHolder.Remove(tmp);
-            NoteList.Remove(ActiveNote.Name);
-            LoadNotesList();
+            RemoveTreeViewNode(ActiveNote.Name);
+        }
+
+
+        /// <summary>
+        /// Makes sure the current active note is safe to discard from the view
+        /// </summary>
+        /// <returns> Returns true if the data can be safely discarded, and returns false otherwise </returns>
+        public bool IsSafeOverwrite()
+        {
+            // gets the input fields tags
+            TextItemTag rtbTag = (TextItemTag)Owner.rtb_NoteBody.Tag;
+            TextItemTag tbTag = (TextItemTag)Owner.tb_NameField.Tag;
+
+            // checks if the data is saved
+            bool tbSafe = tbTag.IsSaved && !tbTag.IsChanged;
+            bool rtbSafe = rtbTag.IsSaved && !rtbTag.IsChanged;
+
+            // returns the result
+            return  tbSafe && rtbSafe;
+        }
+
+
+        /// <summary>
+        /// Applys the data from the current active note
+        /// </summary>
+        private void ApplayActiveNote()
+        {
+            if (ActiveNote == null)
+                return;
+
+            Owner.tb_NameField.Text = ActiveNote.Name;
+            Owner.rtb_NoteBody.Text = ActiveNote.Contents;
+
+            TextItemTag rtbTag = (TextItemTag)Owner.rtb_NoteBody.Tag;
+            TextItemTag tbTag = (TextItemTag)Owner.tb_NameField.Tag;
+
+            rtbTag.IsSaved = true;
+            rtbTag.IsChanged = false;
+            tbTag.IsSaved = true;
+            tbTag.IsChanged = false;
+            
+            Owner.rtb_NoteBody.Tag = rtbTag;
+            Owner.tb_NameField.Tag = tbTag;
 
         }
+
     }
 }

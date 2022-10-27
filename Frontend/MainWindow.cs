@@ -9,6 +9,7 @@ namespace NoteBlock.Frontend
 {
     public partial class MainWindow : Form
     {
+        public bool ChangeName = false;
 
         private readonly MainWindowHandle Handler;
 
@@ -41,6 +42,11 @@ namespace NoteBlock.Frontend
         private void Button_Click(object sender, EventArgs e)
         {
             Handler.OnButtonClickEvent(sender);
+        }
+
+        private void TreeViewNode_MouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            Handler.OnTreeViewNodeMouseClickEvent(e.Node.Text);
         }
     }
 }

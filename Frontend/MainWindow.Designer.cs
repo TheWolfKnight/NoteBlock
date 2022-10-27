@@ -45,6 +45,7 @@ namespace NoteBlock.Frontend
             this.tv_Notes.Name = "tv_Notes";
             this.tv_Notes.Size = new System.Drawing.Size(131, 408);
             this.tv_Notes.TabIndex = 0;
+            this.tv_Notes.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.TreeViewNode_MouseClick);
             // 
             // lb_Notes
             // 
