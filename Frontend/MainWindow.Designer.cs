@@ -29,21 +29,22 @@ namespace NoteBlock.Frontend
         /// </summary>
         private void InitializeComponent()
         {
-            this.treeView1 = new System.Windows.Forms.TreeView();
+            this.tv_Notes = new System.Windows.Forms.TreeView();
             this.lb_Notes = new System.Windows.Forms.Label();
             this.btn_NewNote = new System.Windows.Forms.Button();
             this.btn_DeleteNote = new System.Windows.Forms.Button();
             this.btn_SaveNote = new System.Windows.Forms.Button();
             this.tb_NameField = new System.Windows.Forms.TextBox();
             this.rtb_NoteBody = new System.Windows.Forms.RichTextBox();
+            this.lb_NameCharCount = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // treeView1
+            // tv_Notes
             // 
-            this.treeView1.Location = new System.Drawing.Point(13, 30);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(131, 408);
-            this.treeView1.TabIndex = 0;
+            this.tv_Notes.Location = new System.Drawing.Point(13, 30);
+            this.tv_Notes.Name = "tv_Notes";
+            this.tv_Notes.Size = new System.Drawing.Size(131, 408);
+            this.tv_Notes.TabIndex = 0;
             // 
             // lb_Notes
             // 
@@ -90,7 +91,6 @@ namespace NoteBlock.Frontend
             this.tb_NameField.Name = "tb_NameField";
             this.tb_NameField.Size = new System.Drawing.Size(237, 20);
             this.tb_NameField.TabIndex = 5;
-            this.tb_NameField.Tag = "unchanged";
             this.tb_NameField.Text = "Enter a note name";
             this.tb_NameField.TextChanged += new System.EventHandler(this.TextField_Change);
             this.tb_NameField.Enter += new System.EventHandler(this.TextField_Enter);
@@ -102,24 +102,33 @@ namespace NoteBlock.Frontend
             this.rtb_NoteBody.Name = "rtb_NoteBody";
             this.rtb_NoteBody.Size = new System.Drawing.Size(634, 375);
             this.rtb_NoteBody.TabIndex = 6;
-            this.rtb_NoteBody.Tag = "unchanged";
             this.rtb_NoteBody.Text = "Enter a note";
             this.rtb_NoteBody.TextChanged += new System.EventHandler(this.TextField_Change);
             this.rtb_NoteBody.Enter += new System.EventHandler(this.TextField_Enter);
             this.rtb_NoteBody.Leave += new System.EventHandler(this.TextField_Leave);
+            // 
+            // lb_NameCharCount
+            // 
+            this.lb_NameCharCount.AutoSize = true;
+            this.lb_NameCharCount.Location = new System.Drawing.Point(397, 39);
+            this.lb_NameCharCount.Name = "lb_NameCharCount";
+            this.lb_NameCharCount.Size = new System.Drawing.Size(30, 13);
+            this.lb_NameCharCount.TabIndex = 7;
+            this.lb_NameCharCount.Text = "0/50";
             // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.lb_NameCharCount);
             this.Controls.Add(this.rtb_NoteBody);
             this.Controls.Add(this.tb_NameField);
             this.Controls.Add(this.btn_SaveNote);
             this.Controls.Add(this.btn_DeleteNote);
             this.Controls.Add(this.btn_NewNote);
             this.Controls.Add(this.lb_Notes);
-            this.Controls.Add(this.treeView1);
+            this.Controls.Add(this.tv_Notes);
             this.Name = "MainWindow";
             this.Text = "Note Block";
             this.Load += new System.EventHandler(this.MainWindow_Load);
@@ -129,14 +138,14 @@ namespace NoteBlock.Frontend
         }
 
         #endregion
-
-        private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.Label lb_Notes;
         private System.Windows.Forms.Button btn_NewNote;
         private System.Windows.Forms.Button btn_DeleteNote;
         private System.Windows.Forms.Button btn_SaveNote;
         public System.Windows.Forms.TextBox tb_NameField;
         public System.Windows.Forms.RichTextBox rtb_NoteBody;
+        public System.Windows.Forms.TreeView tv_Notes;
+        public System.Windows.Forms.Label lb_NameCharCount;
     }
 }
 

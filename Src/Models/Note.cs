@@ -9,7 +9,6 @@ namespace NoteBlock.Src.Models
     public class Note
     {
         public string Name;
-        public uint CopyCount;
 
         public string Contents;
         public DateTime CreationDate;
@@ -30,10 +29,9 @@ namespace NoteBlock.Src.Models
         /// <param name="copyCount"> The amount of notes with the same name </param>
         /// <param name="contents"> The contents of the note </param>
         /// <param name="creationDate"> The time at which the note was created </param>
-        public Note( string name, uint copyCount, string contents, DateTime creationDate )
+        public Note( string name, string contents, DateTime creationDate )
         {
             Name = name;
-            CopyCount = copyCount;
             Contents = contents;
             CreationDate = creationDate;
             LastChange = creationDate;
@@ -49,11 +47,10 @@ namespace NoteBlock.Src.Models
         /// <param name="contents"> The contents of the note </param>
         /// <param name="creationDate"> The time at which the note was created </param>
         /// <param name="lastChangeDate"> The time at which the note was last updated </param>
-        public Note(uint id, string name, uint copyCount, string contents, DateTime creationDate, DateTime lastChangeDate )
+        public Note(uint id, string name, string contents, DateTime creationDate, DateTime lastChangeDate )
         {
             ID = id;
             Name = name;
-            CopyCount = copyCount;
             Contents = contents;
             CreationDate = creationDate;
             LastChange = lastChangeDate;

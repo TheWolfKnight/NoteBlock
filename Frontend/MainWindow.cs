@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 
@@ -32,18 +25,17 @@ namespace NoteBlock.Frontend
 
         private void TextField_Enter(object sender, EventArgs e)
         {
-            Handler.OnTextFieldEnterEvent(sender);
+            Handler.OnTextFieldEvent(sender, Handler.HandleTextBoxOnEnterDelegate, Handler.HandleRichTextBoxOnEnterDelegate);
         }
 
         private void TextField_Leave(object sender, EventArgs e)
         {
-            Handler.OnTextFieldLeaveEvent(sender);
+            Handler.OnTextFieldEvent(sender, Handler.HandleTextBoxOnLeaveDelegate, Handler.HandleRichTextBoxOnLeaveDelegate);
         }
-
 
         private void TextField_Change(object sender, EventArgs e)
         {
-            Handler.OnTextFieldChangeEvent(sender);
+            Handler.OnTextFieldEvent(sender, Handler.HandleTextBoxOnChangeDelegate, Handler.HandleRichTextBoxOnChangeDelegate);
         }
 
         private void Button_Click(object sender, EventArgs e)

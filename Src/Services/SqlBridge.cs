@@ -64,7 +64,7 @@ namespace NoteBlock.Src.Services
         /// Gets all the database entrys names, used to load the current list of saved notes
         /// </summary>
         /// <returns> An array containg all the names </returns>
-        public List<Identifier> GetAllDatebaseEntryIdentifiers()
+        public List<string> GetAllDatebaseEntryIdentifiers()
         {
             // Creates a command string for the database querry, then creates an instance of the
             // SqlCommand class to be sent to the database as querry
@@ -75,13 +75,13 @@ namespace NoteBlock.Src.Services
             SqlDataReader reader = sqlCommand.ExecuteReader();
 
             // Creates a string for the result to be pushed to
-            List<Identifier> r = new List<Identifier>();
+            List<string> r = new List<string>();
 
             // Reades the result from the command execution
             // until there is no more to be read
             while (reader.Read())
             {
-                r.Add(new Identifier(reader.GetString(0), reader.GetInt32(1)));
+                r.Add(reader.GetString(1));
             }
 
             return r;
@@ -93,10 +93,10 @@ namespace NoteBlock.Src.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public Note GetDatabaseEntry( Identifier ident )
+        public Note GetDatabaseEntry( string name )
         {
             // Creates a command string and sends it to the database connection.
-            string cmd = $"select * from Notes where Notes.name={ident.Name} and Notes.count={ident.Count}";
+            string cmd = $"select * from Notes where Notes.name={name}";
             SqlCommand sqlCommand = new SqlCommand(cmd, SqlConn);
 
             // Creates a reader that can get the data from the database
@@ -109,7 +109,7 @@ namespace NoteBlock.Src.Services
             {
                 //
                 if (i != 0)
-                    throw new DublicatedEntryException($"The entry {ident.Name} is a dublicated entry, the program could therefore not get your note");
+                    throw new DublicatedEntryException($"The entry {name} is a dublicated entry, the program could therefore not get your note");
 
                 //
                 bool couldParse = uint.TryParse(reader.GetInt32(0).ToString(), out uint id );
@@ -123,7 +123,7 @@ namespace NoteBlock.Src.Services
 
                 //
                 string content = GetDatabaseEntryContent(reader.GetInt32(3));
-                r = new Note(id, reader.GetString(1), copyCount, content, reader.GetDateTime(4), reader.GetDateTime(5));
+                r = new Note(id, reader.GetString(1), content, reader.GetDateTime(4), reader.GetDateTime(5));
                 
                 i++;
             }
