@@ -23,7 +23,7 @@ namespace NoteBlock.Src.Handles
 
 
         /// <summary>
-        /// 
+        /// Initialize the MainWindowHandler instance
         /// </summary>
         /// <param name="owner"></param>
         public MainWindowHandle( MainWindow owner )
@@ -167,7 +167,7 @@ namespace NoteBlock.Src.Handles
         public int HandleTextBoxOnChangeDelegate(TextBox sender)
         {
             // makes sure the change comes from the user
-            if (!Owner.ChangeName || Owner.tb_NameField.TextLength < 1)
+            if (!Owner.ChangeName || Owner.tb_NameField.TextLength < 0)
                 return 1;
 
             // gets the tag for the TextBox and sets them correctly
@@ -185,7 +185,6 @@ namespace NoteBlock.Src.Handles
                 Owner.lb_NameCharCount.Text = "0/50";
                 return 0;
             }
-
             // updates the char counter
             string[] splitLb = Owner.lb_NameCharCount.Text.Split('/');
             splitLb[0] = Owner.tb_NameField.TextLength.ToString();
@@ -296,15 +295,18 @@ namespace NoteBlock.Src.Handles
 
             // gets the name for the note, and makes a new note instance
             string name = Owner.tb_NameField.Text;
-            Note note = new Note(name, Owner.rtb_NoteBody.Text, DateTime.Now);
+            Note note = null;
 
             // Checks if the note already exists.
             // If not the program saves a new note,
             // else it asks if you want to overwrite your note.
             if ( !TreeViewContains(name) )
             {
+                Console.WriteLine("Here");
+                Note tmp = new Note(name, Owner.rtb_NoteBody.Text, DateTime.Now);
                 Owner.tv_Notes.Nodes.Add(new TreeNode(name));
-                TMPNoteHolder.Add(note);
+                TMPNoteHolder.Add(tmp);
+                note = tmp;
             } else
             {
 
@@ -314,10 +316,14 @@ namespace NoteBlock.Src.Handles
                     return;
 
                 Note tmp = TMPNoteHolder.Where(notes => notes.Name == name).FirstOrDefault();
-                if (tmp != null)
-                    TMPNoteHolder.Remove(tmp);
-                TMPNoteHolder.Add(note);
+                int idx = TMPNoteHolder.IndexOf(tmp);
+                tmp.MakeChange(Owner.rtb_NoteBody.Text);
+                TMPNoteHolder[idx] = tmp;
+                note = tmp;
             }
+
+            if (note == null)
+                throw new InvalidDataException("The program faild to create a note on save.");
 
             // Sets the relevant flags
             rtb.IsSaved = true;
@@ -331,6 +337,7 @@ namespace NoteBlock.Src.Handles
 
             // Sets the active note
             ActiveNote = note;
+            ApplayActiveNote();
         }
         
 
@@ -404,13 +411,19 @@ namespace NoteBlock.Src.Handles
         /// Attempts to remove an item from the TreeVeiw
         /// </summary>
         /// <param name="name"> The name of the Item to be removed </param>
-        private void RemoveTreeViewNode(string name)
+        private void RemoveTreeViewNode()
         {
+            if (ActiveNote == null)
+                return;
+
             foreach (TreeNode node in Owner.tv_Notes.Nodes)
             {
-                if (node.Text == name)
+                if (node.Text == ActiveNote.Name)
                 {
                     Owner.tv_Notes.Nodes.Remove(node);
+                    Owner.lb_CreationDate.Text = "";
+                    Owner.lb_LastChangeDate.Text = "";
+                    return;
                 }
             }
             return;
@@ -434,7 +447,7 @@ namespace NoteBlock.Src.Handles
 
             // Removes the item from all relevant areas, and then reloads the list
             TMPNoteHolder.Remove(tmp);
-            RemoveTreeViewNode(ActiveNote.Name);
+            RemoveTreeViewNode();
         }
 
 
@@ -475,7 +488,9 @@ namespace NoteBlock.Src.Handles
             rtbTag.IsChanged = false;
             tbTag.IsSaved = true;
             tbTag.IsChanged = false;
-            
+
+            Owner.lb_CreationDate.Text = ActiveNote.CreationDate.ToString("F");
+            Owner.lb_LastChangeDate.Text = ActiveNote.LastChange.ToString("F");
             Owner.rtb_NoteBody.Tag = rtbTag;
             Owner.tb_NameField.Tag = tbTag;
 
