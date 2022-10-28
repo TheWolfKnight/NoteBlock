@@ -40,16 +40,11 @@ namespace NoteBlock.Src.Handles
         /// </summary>
         public void OnMainWindowLoadEvent()
         {
-            /*
+
             bool connectionResult = Bridge.ConnectToDatabase();
 
             if ( !connectionResult )
-            {
                 throw new Exception($"Could not connect to the database.{Environment.NewLine}This is currently a fatal error, but will later be fixed");
-            }
-
-            NoteList = Bridge.GetAllDatebaseEntryIdentifiers();
-            */
 
             Owner.tb_NameField.Tag = new TextItemTag(false, false);
             Owner.rtb_NoteBody.Tag = new TextItemTag(false, false);
@@ -295,7 +290,7 @@ namespace NoteBlock.Src.Handles
 
             // gets the name for the note, and makes a new note instance
             string name = Owner.tb_NameField.Text;
-            Note note = null;
+            Note? note = null;
 
             // Checks if the note already exists.
             // If not the program saves a new note,

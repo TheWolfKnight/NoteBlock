@@ -68,7 +68,7 @@ namespace NoteBlock.Src.Services
         {
             // Creates a command string for the database querry, then creates an instance of the
             // SqlCommand class to be sent to the database as querry
-            string command = "select name, copyCount from Notes";
+            string command = "select noteName from Notes";
             SqlCommand sqlCommand = new SqlCommand(command, SqlConn);
 
             // Attemts to execute the command to the database
@@ -96,7 +96,7 @@ namespace NoteBlock.Src.Services
         public Note GetDatabaseEntry( string name )
         {
             // Creates a command string and sends it to the database connection.
-            string cmd = $"select * from Notes where Notes.name={name}";
+            string cmd = $"select * from Notes where Notes.noteName={name}";
             SqlCommand sqlCommand = new SqlCommand(cmd, SqlConn);
 
             // Creates a reader that can get the data from the database
@@ -121,9 +121,8 @@ namespace NoteBlock.Src.Services
                     throw new InvalidDataException("Key data was corrupted, could therefor not load in the desired note");
                 }
 
-                //
-                string content = GetDatabaseEntryContent(reader.GetInt32(3));
-                r = new Note(id, reader.GetString(1), content, reader.GetDateTime(4), reader.GetDateTime(5));
+
+                r = new Note(id, reader.GetString(1), reader.GetString(2), reader.GetDateTime(3), reader.GetDateTime(4));
                 
                 i++;
             }
@@ -138,40 +137,44 @@ namespace NoteBlock.Src.Services
         /// <param name="note"> The item to be writen to the database </param>
         public void WriteDatabaseEntry( Note note )
         {
-            throw new TBD();
+
+            SqlCommand sqlCommand;
+
+            string cmd = $"select count(1) from Notes where Notes.noteID={note.ID}";
+            sqlCommand = new SqlCommand(cmd, SqlConn);
+
+            var obj = sqlCommand.ExecuteScalar();
+            int i = Convert.ToInt32(obj);
+
+            if (i == 0) {
+                cmd = $"insert into Notes(noteName, content, creationDate, lastChange) values({note.Name}, {note.Contents}, {note.CreationDate}, {note.LastChange});";
+                sqlCommand = new SqlCommand(cmd, SqlConn);
+            } else
+            {
+                cmd = $"update table Notes set noteName={note.Name}, content={note.Contents}, createionDate={note.CreationDate}, lastChange={note.LastChange} where Notes.noteID={note.ID};";
+                sqlCommand = new SqlCommand(cmd, SqlConn);
+            }
+
+            sqlCommand.ExecuteNonQuery();
         }
 
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="contentHead"></param>
+        /// <param name="noteID"></param>
         /// <returns></returns>
-        public string GetDatabaseEntryContent( int contentHead )
+        public string GetDatabaseEntryContent( int noteID )
         {
             //
-            string cmd = $"select * from Content where Content.id={contentHead}";
+            string cmd = $"select content from Notes where Notes.noteID={noteID}";
             SqlCommand sqlCommand = new SqlCommand(cmd, SqlConn);
 
             //
-            SqlDataReader reader = sqlCommand.ExecuteReader();
-
-            //
-            ContentHelper head = new ContentHelper(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
-            ContentHelper tail = head;
-
-            //
-            while ( tail.GetTail() != null )
-            {
-                cmd = $"select * from Content where Content.id={tail.GetTail()}";
-                sqlCommand = new SqlCommand(cmd, SqlConn);
-                reader = sqlCommand.ExecuteReader();
-                ContentHelper tmp = new ContentHelper(reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
-                tail.SetTail(tmp);
-                tail = tmp;
-            }
-
-            return head.GetContent();
+            object obj = sqlCommand.ExecuteScalar();
+            Console.WriteLine(obj);
+            return "";
+            
         }
 
     }
