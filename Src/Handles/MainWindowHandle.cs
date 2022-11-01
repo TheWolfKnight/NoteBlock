@@ -17,7 +17,6 @@ namespace NoteBlock.Src.Handles
         #nullable enable
         public Note? ActiveNote;
 
-        private List<Note> TMPNoteHolder;
         private readonly MainWindow Owner;
         private SqlBridge Bridge;
 
@@ -30,8 +29,6 @@ namespace NoteBlock.Src.Handles
         {
             Owner = owner;
             Bridge = new SqlBridge("localhost", "NoteBlockDB", TrustedConnection.True );
-            TMPNoteHolder = new List<Note>();
-            ActiveNote = new Note();
         }
 
 
@@ -49,7 +46,7 @@ namespace NoteBlock.Src.Handles
             Owner.tb_NameField.Tag = new TextItemTag(false, false);
             Owner.rtb_NoteBody.Tag = new TextItemTag(false, false);
 
-            // LoadNotesList();
+             LoadNotesList();
 
         }
 
@@ -59,7 +56,10 @@ namespace NoteBlock.Src.Handles
         /// </summary>
         private void LoadNotesList()
         {
-            throw new TBD();
+            Bridge.GetAllDatebaseEntryIdentifiers().ForEach(name =>
+            {
+                Owner.tv_Notes.Nodes.Add(new TreeNode(name));
+            });
         }
 
 
@@ -180,6 +180,7 @@ namespace NoteBlock.Src.Handles
                 Owner.lb_NameCharCount.Text = "0/50";
                 return 0;
             }
+
             // updates the char counter
             string[] splitLb = Owner.lb_NameCharCount.Text.Split('/');
             splitLb[0] = Owner.tb_NameField.TextLength.ToString();
@@ -297,10 +298,9 @@ namespace NoteBlock.Src.Handles
             // else it asks if you want to overwrite your note.
             if ( !TreeViewContains(name) )
             {
-                Console.WriteLine("Here");
                 Note tmp = new Note(name, Owner.rtb_NoteBody.Text, DateTime.Now);
                 Owner.tv_Notes.Nodes.Add(new TreeNode(name));
-                TMPNoteHolder.Add(tmp);
+                Bridge.WriteDatabaseEntry(tmp);
                 note = tmp;
             } else
             {
@@ -309,11 +309,9 @@ namespace NoteBlock.Src.Handles
 
                 if (r != DialogResult.Yes)
                     return;
-
-                Note tmp = TMPNoteHolder.Where(notes => notes.Name == name).FirstOrDefault();
-                int idx = TMPNoteHolder.IndexOf(tmp);
+                Note tmp = Bridge.GetDatabaseEntry(name);
                 tmp.MakeChange(Owner.rtb_NoteBody.Text);
-                TMPNoteHolder[idx] = tmp;
+                Bridge.WriteDatabaseEntry(tmp);
                 note = tmp;
             }
 
@@ -365,7 +363,7 @@ namespace NoteBlock.Src.Handles
         /// <param name="name"> The name of the selected node </param>
         public void OnTreeViewNodeMouseClickEvent(string name)
         {
-            Note note = TMPNoteHolder.Where(node => node.Name == name).FirstOrDefault();
+            Note note = Bridge.GetDatabaseEntry(name);
 
             if (note == null)
                 throw new InvalidDataException($"Could not find a note by the name: {name}");
@@ -434,14 +432,8 @@ namespace NoteBlock.Src.Handles
             if (ActiveNote == null)
                 return;
 
-            // get the first element from the database that has the same name, or null if nothing with that name exsists
-            // if the name does not appear, the method returns
-            Note tmp = TMPNoteHolder.Where(notes => notes.Name == ActiveNote.Name).FirstOrDefault();
-            if (tmp == null)
-                return;
-
-            // Removes the item from all relevant areas, and then reloads the list
-            TMPNoteHolder.Remove(tmp);
+            Bridge.RemoveDatabaseEntry(ActiveNote.Name);
+            
             RemoveTreeViewNode();
         }
 
