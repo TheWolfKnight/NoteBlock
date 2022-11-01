@@ -157,10 +157,13 @@ namespace NoteBlock.Src.Services
                     cmd = $"insert into Notes values(@noteName, @content, @creationDate, @lastChange);";
                     using (SqlCommand sqlCommand = new SqlCommand(cmd, SqlConn))
                     {
+
+                        Console.WriteLine(note);
+
                         sqlCommand.Parameters.AddWithValue("@noteName", note.Name);
                         sqlCommand.Parameters.AddWithValue("@content", note.Contents);
-                        sqlCommand.Parameters.AddWithValue("@creationDate", note.CreationDate.ToString("d"));
-                        sqlCommand.Parameters.AddWithValue("@lastChange", note.LastChange.ToString("d"));
+                        sqlCommand.Parameters.AddWithValue("@creationDate", note.CreationDate);
+                        sqlCommand.Parameters.AddWithValue("@lastChange", note.LastChange);
 
                         sqlCommand.ExecuteNonQuery();
 
@@ -168,7 +171,7 @@ namespace NoteBlock.Src.Services
                 }
                 else
                 {
-                    cmd = $"update Notes set noteName=@name, content=@content, creationDate=@creation, lastChange=@lastChange where Notes.noteID=@id;";
+                    cmd = "update Notes set noteName=@name, content=@content, creationDate=@creation, lastChange=@lastChange where Notes.noteID=@id;";
                     using (SqlCommand sqlCommand = new SqlCommand(cmd, SqlConn))
                     {
 

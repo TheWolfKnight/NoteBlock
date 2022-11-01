@@ -26,7 +26,6 @@ namespace NoteBlock.Src.Models
         /// Creates a instance of the Note Class, and sets the internal fields to the desired valuse
         /// </summary>
         /// <param name="name"> The name of the note </param>
-        /// <param name="copyCount"> The amount of notes with the same name </param>
         /// <param name="contents"> The contents of the note </param>
         /// <param name="creationDate"> The time at which the note was created </param>
         public Note( string name, string contents, DateTime creationDate )
@@ -66,6 +65,12 @@ namespace NoteBlock.Src.Models
         {
             LastChange = DateTime.Now;
             Contents = contents;
+        }
+
+
+        public override string ToString()
+        {
+            return $"Note(ID={ID}, Name={Name}, Content Length={Contents.Length}, CreationDate={CreationDate}, LastChange={LastChange})";
         }
 
     }

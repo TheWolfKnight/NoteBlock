@@ -46,6 +46,9 @@ namespace NoteBlock.Frontend
 
         private void TreeViewNode_MouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
+            if (e.Button != MouseButtons.Left)
+                return;
+
             Handler.OnTreeViewNodeMouseClickEvent(e.Node.Text);
         }
     }
